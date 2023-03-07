@@ -38,6 +38,7 @@ fi
 
 mkdir -p /root/.config/git
 chown -R ttrss:ttrss /root/.gitconfig /root/.config/git /var/www
+chown -R ttrss:ttrss /var/lib/nginx /run/nginx /var/log/nginx
 
 sh /wait-for.sh $DB_HOST:$DB_PORT -- php /initialize.php && \
 sudo -E -u ttrss php /var/www/update.php --update-schema=force-yes && \
