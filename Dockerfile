@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3 AS builder
+FROM docker.io/alpine:3.17 AS builder
 
 # Download ttrss via git
 WORKDIR /var/www
@@ -73,7 +73,7 @@ RUN curl -sL https://github.com/levito/tt-rss-feedly-theme/archive/master.tar.gz
 RUN curl -sL https://github.com/DIYgod/ttrss-theme-rsshub/archive/master.tar.gz | \
   tar xzvpf - --strip-components=2 -C . ttrss-theme-rsshub-master/dist/rsshub.css
 
-FROM docker.io/alpine:3
+FROM docker.io/alpine:3.17
 
 LABEL maintainer="Henry<hi@henry.wang>"
 
@@ -93,7 +93,7 @@ ENV DB_USER ttrss
 ENV DB_PASS ttrss
 
 # Install dependencies
-RUN chmod -x /wait-for.sh && chmod -x /docker-entrypoint.sh && apk add --update --no-cache git nginx s6 curl sudo shadow \
+RUN apk add --update --no-cache git nginx s6 curl sudo shadow tzdata \
   php81 php81-fpm php81-phar \
   php81-pdo php81-gd php81-pgsql php81-pdo_pgsql php81-xmlwriter \
   php81-mbstring php81-intl php81-xml php81-curl php81-simplexml \
@@ -172,5 +172,8 @@ ENV SESSION_COOKIE_LIFETIME=24
 ENV SINGLE_USER_MODE=false
 ENV LOG_DESTINATION=sql
 ENV FEED_LOG_QUIET=false
+ENV PUID=1000
+ENV PGID=1000
+ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
