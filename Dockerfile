@@ -122,12 +122,13 @@ COPY --chmod=755 --from=builder /var/www /var/www
 
 ENV LANG=C.UTF-8
 
-RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download" && \
-  ALPINE_GLIBC_PACKAGE_VERSION="2.34-r0" && \
-  ALPINE_GLIBC_BASE_PACKAGE_FILENAME="glibc-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
-  ALPINE_GLIBC_BIN_PACKAGE_FILENAME="glibc-bin-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
-  ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
-  apk add --no-cache --virtual=.build-dependencies wget && \
+ARG ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download"
+ARG ALPINE_GLIBC_PACKAGE_VERSION="2.34-r0"
+ARG ALPINE_GLIBC_BASE_PACKAGE_FILENAME="glibc-$ALPINE_GLIBC_PACKAGE_VERSION.apk"
+ARG ALPINE_GLIBC_BIN_PACKAGE_FILENAME="glibc-bin-$ALPINE_GLIBC_PACKAGE_VERSION.apk"
+ARG ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk"
+
+RUN apk add --no-cache --virtual=.build-dependencies wget && \
   wget https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -O /etc/apk/keys/sgerrand.rsa.pub && \
   wget \
   "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
@@ -159,21 +160,21 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
 EXPOSE 80
 
 # Database default settings
-ENV DB_HOST=database.postgres
-ENV DB_PORT=5432
-ENV DB_USER=postgres
-ENV DB_PASS=ttrss
-ENV DB_NAME=ttrss
+ENV DB_HOST="database.postgres" \
+    DB_PORT=5432 \
+    DB_USER=postgres \
+    DB_PASS=ttrss \
+    DB_NAME=ttrss
 
 # Some default settings
-ENV SELF_URL_PATH=http://localhost:181/
-ENV ENABLE_PLUGINS=auth_internal,fever
-ENV SESSION_COOKIE_LIFETIME=24
-ENV SINGLE_USER_MODE=false
-ENV LOG_DESTINATION=sql
-ENV FEED_LOG_QUIET=false
-ENV PUID=1000
-ENV PGID=1000
-ENV TZ=Asia/Shanghai
+ENV SELF_URL_PATH="http://localhost:181/" \
+    ENABLE_PLUGINS="auth_internal,fever" \
+    SESSION_COOKIE_LIFETIME=24 \
+    SINGLE_USER_MODE=false \
+    LOG_DESTINATION=sql \
+    FEED_LOG_QUIET=false \
+    PUID=1000 \
+    PGID=1000 \
+    TZ=Asia/Shanghai
 
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
