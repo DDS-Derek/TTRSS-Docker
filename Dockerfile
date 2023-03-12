@@ -75,7 +75,7 @@ RUN curl -sL https://github.com/DIYgod/ttrss-theme-rsshub/archive/master.tar.gz 
 
 FROM docker.io/alpine:3.17
 
-LABEL maintainer="Henry<hi@henry.wang>"
+LABEL maintainer="Henry<hi@henry.wang> DDSRem<ddsrem@163.com>"
 
 WORKDIR /var/www
 
@@ -93,16 +93,17 @@ ENV DB_USER ttrss
 ENV DB_PASS ttrss
 
 # Install dependencies
-RUN apk add --update --no-cache git nginx s6 curl sudo shadow tzdata \
+RUN apk add --update --no-cache git nginx s6 curl sudo shadow tzdata bash \
   php81 php81-fpm php81-phar \
   php81-pdo php81-gd php81-pgsql php81-pdo_pgsql php81-xmlwriter \
   php81-mbstring php81-intl php81-xml php81-curl php81-simplexml \
   php81-session php81-tokenizer php81-dom php81-fileinfo php81-ctype \
   php81-json php81-iconv php81-pcntl php81-posix php81-zip php81-exif php81-openssl \
-  ca-certificates && rm -rf /var/cache/apk/* \
+  ca-certificates \
   # Update libiconv as the default version is too low
   # Do not bump this dependency https://gitlab.alpinelinux.org/alpine/aports/-/issues/12328
   && apk add gnu-libiconv=1.15-r3 --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ \
+  && rm -rf /var/cache/apk/* \
   && rm -rf /var/www
 
 # Add user and set php81
@@ -120,7 +121,8 @@ COPY --chmod=755 --from=builder /var/www /var/www
 # Install GNU libc (aka glibc) and set C.UTF-8 locale as default.
 # https://github.com/Docker-Hub-frolvlad/docker-alpine-glibc/blob/master/Dockerfile
 
-ENV LANG=C.UTF-8
+ENV LANG=C.UTF-8 \
+    PS1="\[\e[32m\][\[\e[m\]\[\e[36m\]\u \[\e[m\]\[\e[37m\]@ \[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[32m\]]\[\e[m\] \[\e[37;35m\]in\[\e[m\] \[\e[33m\]\w\[\e[m\] \[\e[32m\][\[\e[m\]\[\e[37m\]\d\[\e[m\] \[\e[m\]\[\e[37m\]\t\[\e[m\]\[\e[32m\]]\[\e[m\] \n\[\e[1;31m\]$ \[\e[0m\]"
 
 ARG ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download"
 ARG ALPINE_GLIBC_PACKAGE_VERSION="2.34-r0"
