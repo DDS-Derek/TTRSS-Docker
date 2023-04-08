@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
 
   database.postgres:
-    image: postgres:13-alpine
+    image: postgres:15-alpine
     environment:
       - POSTGRES_PASSWORD=ttrss # feel free to change the password
       - POSTGRES_USER=ttrss
